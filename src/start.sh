@@ -7,11 +7,8 @@ mkdir -p /stable-diffusion-webui/models/Stable-diffusion
 mkdir -p /stable-diffusion-webui/models/Lora
 mkdir -p /stable-diffusion-webui/embeddings
 
-# Копируем модель Flux в директорию моделей, если она еще не скопирована
-if [ ! -f "/stable-diffusion-webui/models/Stable-diffusion/flux_checkpoint.safetensors" ]; then
-    echo "Copying Flux model to models directory..."
-    cp /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/flux_checkpoint.safetensors
-fi
+# Модель Flux уже загружена в директорию моделей при сборке образа
+echo "Using Flux model from /stable-diffusion-webui/models/Stable-diffusion/flux_checkpoint.safetensors"
 
 # Загружаем EasyNegative embedding, если его еще нет
 if [ ! -f "/stable-diffusion-webui/embeddings/EasyNegative.safetensors" ]; then
@@ -20,7 +17,7 @@ if [ ! -f "/stable-diffusion-webui/embeddings/EasyNegative.safetensors" ]; then
 fi
 
 echo "Starting Forge WebUI API"
-python /stable-diffusion-webui/webui.py --skip-python-version-check --skip-torch-cuda-test --skip-install --ckpt /stable-diffusion-webui/models/Stable-diffusion/flux_checkpoint.safetensors --lowram --disable-safe-unpickle --port 3000 --api --nowebui --skip-version-check --no-hashing --no-download-sd-model --forge-preset flux &
+python /stable-diffusion-webui/webui.py --skip-python-version-check --skip-torch-cuda-test --skip-install --ckpt flux_checkpoint.safetensors --lowram --disable-safe-unpickle --port 3000 --api --nowebui --skip-version-check --no-hashing --no-download-sd-model --forge-preset flux &
 
 echo "Starting RunPod Handler"
 python -u /rp_handler.py
