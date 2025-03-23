@@ -80,7 +80,8 @@ COPY src/start.sh /start.sh
 COPY src/weights.py /weights.py
 
 COPY builder/cache.py /stable-diffusion-webui/cache.py
-RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/flux_checkpoint.safetensors
+# Пропускаем запуск cache.py при сборке, он будет запущен при старте контейнера на RunPod, где есть GPU
+# RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/flux_checkpoint.safetensors
 
 # Cleanup section (Worker Template)
 RUN apt-get autoremove -y && \
