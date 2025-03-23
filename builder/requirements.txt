@@ -12,7 +12,7 @@ scikit-image==0.21.0
 accelerate==0.21.0
 basicsr==1.4.2
 einops==0.8.0
-gradio==4.11.0
+gradio==3.50.2
 kornia==0.6.7
 numpy<2
 omegaconf==2.2.3
@@ -20,7 +20,7 @@ pytorch_lightning==1.9.4
 realesrgan==0.3.0
 safetensors==0.4.3
 timm==0.9.2
-torch
+# torch - устанавливается через Dockerfile
 torchdiffeq==0.2.3
 torchsde==0.2.6
 
