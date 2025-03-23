@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------- #
-#                         Stage 1: Download the models                          #
+#                         Stage 1: Download the models                         #
 # ---------------------------------------------------------------------------- #
 FROM alpine/git:2.36.2 as download
 
@@ -26,7 +26,7 @@ RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f1
 # ---------------------------------------------------------------------------- #
 #                        Stage 3: Build the final image                        #
 # ---------------------------------------------------------------------------- #
-FROM python:3.10.9-slim as build_final_image
+FROM python:3.11-slim as build_final_image
 
 ARG SHA=5ef669de080814067961f28357256e8fe27544f4
 
@@ -67,7 +67,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # Install Python dependencies (Worker Template)
 COPY builder/requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --upgrade pip && \
+    pip install pip==23.3.1 && \
     pip install --upgrade -r /requirements.txt --no-cache-dir && \
     rm /requirements.txt
 
