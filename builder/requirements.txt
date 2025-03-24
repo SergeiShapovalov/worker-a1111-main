@@ -12,7 +12,7 @@ scikit-image==0.21.0
 accelerate==0.21.0
 basicsr==1.4.2
 einops==0.8.0
-gradio==3.50.2
+gradio==3.41.2
 kornia==0.6.7
 numpy<2
 omegaconf==2.2.3
