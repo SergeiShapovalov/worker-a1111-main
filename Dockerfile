@@ -72,7 +72,13 @@ COPY builder/requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install pip==23.3.1 && \
     pip install --upgrade -r /requirements.txt --no-cache-dir && \
-    rm /requirements.txt
+    rm /requirements.txt \
+
+COPY builder/requirements_versions.txt /requirements_versions.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install pip==23.3.1 && \
+    pip install --upgrade -r /requirements_versions.txt --no-cache-dir && \
+    rm /requirements_versions.txt
 
 # Копируем файлы из директории src
 COPY src/rp_handler.py /rp_handler.py
