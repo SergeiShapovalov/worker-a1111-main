@@ -17,7 +17,7 @@ import base64
 from io import BytesIO
 import uuid
 
-# Константы
+# Константы 
 LOCAL_URL = "http://127.0.0.1:3000/sdapi/v1"
 FLUX_CHECKPOINT_URL = "https://civitai.com/api/download/models/691639?type=Model&format=SafeTensor&size=full&fp=fp32"
 sys.path.extend(["/stable-diffusion-webui"])
