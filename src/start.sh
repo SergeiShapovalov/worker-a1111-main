@@ -7,8 +7,15 @@ mkdir -p /stable-diffusion-webui/models/Stable-diffusion
 mkdir -p /stable-diffusion-webui/models/Lora
 mkdir -p /stable-diffusion-webui/embeddings
 
-# Модель Flux уже загружена в директорию моделей при сборке образа
-echo "Using Flux model from /stable-diffusion-webui/models/Stable-diffusion/flux_checkpoint.safetensors"
+# Проверяем наличие модели Flux и загружаем ее при необходимости
+FLUX_MODEL_PATH="/stable-diffusion-webui/models/Stable-diffusion/flux_checkpoint.safetensors"
+if [ ! -f "$FLUX_MODEL_PATH" ]; then
+    echo "Downloading Flux model..."
+    wget -q -O "$FLUX_MODEL_PATH" "https://civitai.com/api/download/models/691639?type=Model&format=SafeTensor&size=full&fp=fp32&token=18b51174c4d9ae0451a3dedce1946ce3"
+    echo "Flux model downloaded successfully"
+else
+    echo "Using existing Flux model from $FLUX_MODEL_PATH"
+fi
 
 # Загружаем EasyNegative embedding, если его еще нет
 if [ ! -f "/stable-diffusion-webui/embeddings/EasyNegative.safetensors" ]; then
