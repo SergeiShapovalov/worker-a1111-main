@@ -15,6 +15,12 @@ jobs:
           rm -rf /opt/ghc
           rm -rf "/usr/local/share/boost"
           rm -rf "$AGENT_TOOLSDIRECTORY"
+          # Дополнительная очистка для освобождения места
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+          df -h
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -28,8 +34,32 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Check and Create Docker Hub Repository
+        run: |
+          echo "Checking Docker Hub repository: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}"
+          
+          # Проверяем существование репозитория
+          REPO_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" -u ${{ secrets.DOCKERHUB_USERNAME }}:${{ secrets.DOCKERHUB_TOKEN }} \
+            "https://hub.docker.com/v2/repositories/${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}")
+          
+          # Если репозиторий не существует (код 404), создаем его
+          if [ "$REPO_EXISTS" = "404" ]; then
+            echo "Repository does not exist. Creating repository ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}"
+            
+            # Создаем репозиторий
+            curl -X POST -H "Content-Type: application/json" -u ${{ secrets.DOCKERHUB_USERNAME }}:${{ secrets.DOCKERHUB_TOKEN }} \
+              -d '{"namespace":"${{ secrets.DOCKERHUB_USERNAME }}", "name":"${{ secrets.DOCKERHUB_REPO }}", "is_private": false, "description": "RunPod Worker Image"}' \
+              "https://hub.docker.com/v2/repositories/"
+            
+            echo "Repository created successfully"
+          else
+            echo "Repository already exists"
+          fi
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_REPO }}/${{ secrets.DOCKERHUB_IMG }}:dev
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:dev
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:buildcache,mode=max
